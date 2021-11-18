@@ -4,7 +4,7 @@ import axios from "axios";
 import "components/Application.scss";
 import DayList from "./DayList";
 import Appointment from "./Appointment";
-import getAppointmentsForDay from "../helpers/selectors";
+import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
 
 export default function Application(props) {
   const [state, setState] = useState({
@@ -12,6 +12,7 @@ export default function Application(props) {
     days: [],
     // you may put the line below, but will have to remove/comment hardcoded appointments variable
     appointments: {},
+    interviewers: {},
   });
 
   const setDay = (day) => setState({ ...state, day });
@@ -19,19 +20,26 @@ export default function Application(props) {
   useEffect(() => {
     const daysURL = `/api/days`;
     const appointmentsURL = `/api/appointments`;
-    Promise.all([axios.get(daysURL), axios.get(appointmentsURL)]).then(
-      (all) => {
-        console.log("all test", all);
-        setState((prev) => ({
-          ...prev,
-          days: all[0].data,
-          appointments: all[1].data,
-        }));
-      }
-    );
-  });
+    const interviewersURL = `/api/interviewers`;
+    Promise.all([
+      axios.get(daysURL),
+      axios.get(appointmentsURL),
+      axios.get(interviewersURL),
+    ]).then((all) => {
+      setState((prev) => ({
+        ...prev,
+        days: all[0].data,
+        appointments: all[1].data,
+        interviewers: all[2].data,
+      }));
+    });
+  }, []);
 
   const dailyAppointments = getAppointmentsForDay(state, state.day);
+
+  const appointmentMap = dailyAppointments.map((appointment) => {
+    return <Appointment key={appointment.id} {...appointment} />;
+  });
 
   return (
     <main className="layout">
@@ -51,12 +59,8 @@ export default function Application(props) {
           alt="Lighthouse Labs"
         />
       </section>
-      <section className="schedule">
-        {dailyAppointments.map((appointment) => {
-          return <Appointment key={appointment.id} {...appointment} />;
-        })}
-        <Appointment key="last" time="5pm" />
-      </section>
+      <section className="schedule">{appointmentMap}</section>
+      {console.log(state.interviewers)}
     </main>
   );
 }
