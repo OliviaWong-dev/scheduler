@@ -60,7 +60,6 @@ export default function Application(props) {
         />
       </section>
       <section className="schedule">{appointmentMap}</section>
-      {console.log(state.interviewers)}
     </main>
   );
 }
