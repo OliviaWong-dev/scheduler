@@ -13,3 +13,5 @@ export function getInterview(state, interview) {
   interview.interviewer = state.interviewers[interview.interviewer];
   return interview;
 }
+
+export function getInterviewersForDay(state, day) {}
