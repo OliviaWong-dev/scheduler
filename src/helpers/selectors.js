@@ -1,4 +1,5 @@
 export function getAppointmentsForDay(state, day) {
+  console.log("state && day", state, day);
   let found = state.days.find((d) => day === d.name);
   if (state.days.length === 0 || found === undefined) {
     return [];
