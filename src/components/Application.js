@@ -19,7 +19,10 @@ export default function Application(props) {
     interviewers: {},
   });
 
-  const setDay = (day) => setState({ ...state, day });
+  const setDay = (day) => {
+    console.log("day", day);
+    setState({ ...state, day });
+  };
 
   useEffect(() => {
     const daysURL = `/api/days`;
@@ -59,9 +62,7 @@ export default function Application(props) {
   };
 
   const appointmentMap = dailyAppointments.map((appointment) => {
-    console.log("appt.interview", appointment.interview);
     const interview = getInterview(state, appointment.interview);
-    console.log("interview", interview);
     return (
       <Appointment
         key={appointment.id}
