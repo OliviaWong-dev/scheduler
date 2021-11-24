@@ -10,8 +10,6 @@ export function getInterview(state, interview) {
   if (interview === null || interview === undefined) {
     return null;
   }
-  // interview.interviewer = state.interviewers[interview.interviewer];
-  // return interview;
   return {
     interviewer: state.interviewers[interview.interviewer],
     student: interview.student,
