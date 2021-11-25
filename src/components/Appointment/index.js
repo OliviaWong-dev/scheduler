@@ -38,19 +38,19 @@ export default function Appointment(props) {
         transition(SHOW);
       })
       .catch(() => {
-        transition(ERROR_SAVE);
+        transition(ERROR_SAVE, true);
       });
   };
 
   const onDelete = function () {
-    transition(DELETE);
+    transition(DELETE, true);
     props
       .cancelInterview(props.id)
       .then(() => {
         transition(EMPTY);
       })
       .catch(() => {
-        transition(ERROR_DELETE);
+        transition(ERROR_DELETE, true);
       });
   };
 
@@ -84,7 +84,9 @@ export default function Appointment(props) {
         )}
         {mode === SAVING && <Status message="SAVING" />}
         {mode === DELETE && <Status message="Deleting" />}
-        {mode === CONFIRM && <Confirm onConfirm={onDelete} />}
+        {mode === CONFIRM && (
+          <Confirm onConfirm={onDelete} onCancel={() => transition(SHOW)} />
+        )}
         {mode === ERROR_SAVE && (
           <Error
             message="save"
