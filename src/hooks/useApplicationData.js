@@ -32,21 +32,24 @@ export default function useApplicationData() {
     });
   }, []);
 
-  const bookInterview = function (id, interview) {
-    return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
-      const appointment = {
-        ...state.appointments[id],
-        interview: { ...interview },
-      };
-      const appointments = {
-        ...state.appointments,
-        [id]: appointment,
-      };
-
-      updateSpots("bookInterview");
+  const bookInterview = function (id, interview, isNew) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview },
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment,
+    };
+    return axios.put(`/api/appointments/${id}`, appointment).then(() => {
+      // updateSpots("bookInterview");
+      const days = isNew
+        ? updateSpots2([...state.days], id, -1)
+        : [...state.days];
       setState({
         ...state,
         appointments,
+        days,
       });
     });
   };
@@ -58,16 +61,15 @@ export default function useApplicationData() {
     };
     delete deleteItem[id];
     return axios.delete(`/api/appointments/${id}`).then(() => {
-      updateSpots();
-      setState({ ...state, deleteItem });
+      // updateSpots();
+      const days = updateSpots2([...state.days], id, 1);
+      setState({ ...state, deleteItem, days });
     });
   };
 
   const updateSpots = function (requestType) {
     const dayIndex = state.days.findIndex((day) => day.name === state.day);
     const days = { ...state.days };
-    // const day = days[dayIndex];
-
     if (dayIndex < 0) return;
     if (requestType === "bookInterview") {
       days[dayIndex].spots -= 1;
@@ -77,6 +79,15 @@ export default function useApplicationData() {
       // day.spots += 1;
     }
     // days[dayIndex] = { ...day };
+    return days;
+  };
+
+  const updateSpots2 = function (days, id, value) {
+    days.forEach((day) => {
+      if (day.appointments.includes(id)) {
+        day.spots = day.spots + value;
+      }
+    });
     return days;
   };
 

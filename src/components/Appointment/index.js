@@ -26,14 +26,14 @@ export default function Appointment(props) {
     props.interview ? SHOW : EMPTY
   );
 
-  const save = function (name, interviewer) {
+  const save = function (name, interviewer, isNew) {
     const interview = {
       student: name,
       interviewer,
     };
     transition(SAVING);
     props
-      .bookInterview(props.id, interview)
+      .bookInterview(props.id, interview, isNew)
       .then(() => {
         transition(SHOW);
       })
@@ -56,7 +56,7 @@ export default function Appointment(props) {
 
   return (
     <>
-      <article className="appointment">
+      <article className="appointment" data-testid="appointment">
         <Header time={props.time} />
         {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
         {mode === SHOW && (
@@ -72,14 +72,19 @@ export default function Appointment(props) {
             interviewers={props.interviewers}
             onCancel={back}
             onSave={save}
+            isNew={true}
           />
         )}
         {mode === EDIT && (
           <Form
             interviewers={props.interviewers}
+            interviewer={
+              props.interview.interviewer && props.interview.interviewer.id
+            }
             student={props.interview.student}
             onCancel={back}
             onSave={save}
+            isNew={false}
           />
         )}
         {mode === SAVING && <Status message="SAVING" />}
@@ -87,14 +92,7 @@ export default function Appointment(props) {
         {mode === CONFIRM && (
           <Confirm onConfirm={onDelete} onCancel={() => transition(SHOW)} />
         )}
-        {mode === ERROR_SAVE && (
-          <Error
-            message="save"
-            onClose={() => {
-              transition(EMPTY);
-            }}
-          />
-        )}
+        {mode === ERROR_SAVE && <Error message="save" onClose={back} />}
         {mode === ERROR_DELETE && (
           <Error
             message="delete"

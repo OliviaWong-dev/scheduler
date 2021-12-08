@@ -13,15 +13,14 @@ export default function useVisualMode(initial) {
     setMode(newMode);
   };
   const back = function () {
-    if (history.length >= 2) {
+    if (history.length > 1) {
       let newHistory = history.slice(0, -1);
-      setHistory(newHistory);
-      // history.pop();
-      setMode(newHistory[newHistory.length - 1]);
+      setHistory((prev) => [...prev].slice(0, -1));
+      setMode(history[history.length - 2]);
+    } else {
+      setMode(initial);
+      setHistory(initial);
     }
-    if (history.length === 1) {
-    }
-    return;
   };
   return { mode, transition, back };
 }
