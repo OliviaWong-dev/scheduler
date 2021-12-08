@@ -176,7 +176,6 @@ describe("Application", () => {
 
     fireEvent.click(queryByAltText(appointment, "Delete"));
 
-    debug();
     // 4. Check that the confirmation message is shown.
     expect(
       getByText(appointment, "Delete the appointment?")
@@ -184,7 +183,8 @@ describe("Application", () => {
 
     // 5. Click the "Confirm" button on the confirmation.
     fireEvent.click(queryByText(appointment, "Confirm"));
-
-    // await waitForElement(() => getByText(appointment, "Error"));
+    
+    debug();
+    await waitForElement(() => getByText(appointment, "Error"));
   });
 });
